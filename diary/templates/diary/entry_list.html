@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Записи - Мой дневник{% endblock %}
+{% block content %}
+<h1>Мои записи</h1>
+<ul class="list-group">
+  {% for entry in entries %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <a href="{% url 'diary:entry_detail' entry.pk %}">{{ entry.title }}</a>
+      <small class="text-muted">{{ entry.created_at|date:"Y-m-d H:i" }}</small>
+    </li>
+  {% empty %}
+    <li class="list-group-item">Пока записей нет .</li>
+  {% endfor %}
+</ul>
+{% endblock %}

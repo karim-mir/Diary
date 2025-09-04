@@ -31,6 +31,11 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action'] = 'Create'
+        return context
+
 
 class EntryUpdateView(LoginRequiredMixin, UpdateView):
     model = Entry
@@ -40,6 +45,11 @@ class EntryUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Entry.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action'] = 'Edit'
+        return context
 
 
 class EntryDeleteView(LoginRequiredMixin, DeleteView):
