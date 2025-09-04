@@ -1,0 +1,114 @@
+body {
+    display: flex;
+    margin: 0;
+    height: 100vh;
+    overflow-x: hidden; /* Чтобы не было горизонтального скролла при открытии меню */
+}
+
+/* Сайдбар */
+.nav-sidebar {
+    width: 200px;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: fixed; /* Фиксируем сбоку */
+    top: 0;
+    left: 0;
+    overflow-y: auto; /* Скролл если контента много */
+    transition: transform 0.3s ease; /* Плавное появление */
+    transform: translateX(0); /* По умолчанию виден */
+    z-index: 1050; /* Поверх контента */
+}
+
+/* Класс для скрытия сайдбара (например, при мобильном виде) */
+.nav-sidebar.closed {
+    transform: translateX(-100%);
+}
+
+/* Элементы меню */
+.nav-sidebar .nav-item {
+    text-align: left;
+}
+
+.nav-sidebar .nav-link {
+    color: white;
+}
+
+.nav-sidebar .nav-link:hover {
+    background-color: #444;
+}
+
+/* Заголовок меню */
+.menu-title {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #333;
+    color: white;
+}
+
+.menu-title i {
+    margin-right: 10px; /* Отступ для иконки */
+}
+
+/* Кнопка открытия меню (например, гамбургер) */
+#openMenuBtn {
+  position: fixed;  /* фиксируем относительно окна браузера */
+  top: 0;           /* прижимаем к верхнему краю */
+  left: 0;          /* прижимаем к левому краю */
+  z-index: 1000;    /* чтобы кнопка была поверх других элементов */
+
+  /* Дополнительно для удобства и внешнего вида */
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#openMenuBtn {
+   position: fixed !important;
+   top: 0 !important;
+   left: 0 !important;
+   margin: 0 !important;
+
+   padding:10px;
+
+   background-color: transparent;
+   border:none;
+   font-size:24px;
+   cursor:pointer;
+
+   z-index:10000;
+}
+
+/* Карточка с изображением сверху */
+.card-img-top {
+    background-color: grey; /* Серый фон */
+    color: white; /* Белый текст */
+    height: 60%; /* Занимает 60% высоты карточки */
+    display: flex; /* Используем Flexbox для центрирования текста */
+    justify-content: center; /* Центр по горизонтали */
+    align-items: center; /* Центр по вертикали */
+}
+
+/* Цена товара или элемента */
+.price {
+    font-size: 1.5rem; /* Увеличиваем шрифт цены */
+    color:#28a745; /* Цвет текста для цены (зелёный)*/
+}
+
+/* Кастомные отступы слева и справа (возможно для контента)*/
+.custom-padding-left {
+   padding-left :120px ;
+}
+
+.custom-padding-right{
+   padding-left :72px ;
+}
+
+.custom-margin {
+    margin-top: 120px;
+}
