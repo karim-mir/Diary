@@ -2,6 +2,12 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Entry
+from django.views.generic import TemplateView
+
+
+class HomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'diary/base.html'
+
 
 class EntryListView(LoginRequiredMixin, ListView):
     model = Entry
