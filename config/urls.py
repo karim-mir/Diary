@@ -3,6 +3,7 @@ from django.urls import path, include  # добавляем include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('diary/', include('diary.urls', namespace='diary')),  # подключаем маршруты diary
+    path('diary/', include('diary.urls', namespace='diary')),
+    path('users/', include('users.urls', namespace='users')),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
