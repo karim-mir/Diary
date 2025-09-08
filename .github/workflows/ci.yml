@@ -101,14 +101,6 @@ jobs:
           EOF
           chmod 600 ~/.ssh/deploy_key
 
-      - name: Debug key file
-        run: |
-          echo "Key file content:"
-          cat ~/.ssh/deploy_key
-          echo ""
-          echo "Key file permissions:"
-          ls -la ~/.ssh/deploy_key
-
       - name: Test SSH connection
         run: |
           ssh -v -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection successful!'"
