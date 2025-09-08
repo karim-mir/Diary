@@ -84,15 +84,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check SSH key
+        run: |
+          echo "SSH key length: ${#SSH_KEY}"
+          echo "SSH key first 100 chars: ${SSH_KEY:0:100}"
+
       - name: Add server to known hosts
         run: |
           mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
-      - name: Setup SSH
+      - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Test SSH connection
+        run: |
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection successful!'"
 
       - name: Deploy to server
         run: |
