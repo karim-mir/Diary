@@ -1,8 +1,8 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.core.mail import send_mail
 
 from users.forms import CustomUserRegistrationForm
 from users.models import EmailConfirmation
