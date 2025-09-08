@@ -1,16 +1,18 @@
-FROM python:3.12-slim
+FROM python:3.12
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
 
-# Копируем файлы зависимостей и устанавливаем их
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY pyproject.toml poetry.lock /app/
 
-# Копируем весь проект в рабочую папку
-COPY . .
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-interaction --no-ansi --no-root
 
-# Открываем порт для доступа к приложению
+COPY . /app/
+
 EXPOSE 8000
 
-# Команда для запуска Django сервера
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
