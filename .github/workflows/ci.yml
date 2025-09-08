@@ -108,8 +108,10 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+            # Выполняем деплой
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
             docker stop myapp || true
             docker rm myapp || true
             docker run -d --name myapp -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
+            echo 'Deployment completed successfully!'
           "
