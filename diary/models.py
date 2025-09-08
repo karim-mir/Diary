@@ -12,9 +12,9 @@ class Entry(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
-        verbose_name = 'Запись'
-        verbose_name_plural = 'Записи'
+        ordering = ["-created_at"]
+        verbose_name = "Запись"
+        verbose_name_plural = "Записи"
 
     def __str__(self):
         return self.title
