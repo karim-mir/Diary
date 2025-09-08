@@ -84,30 +84,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check SSH key
-        run: |
-          echo "SSH key length: ${#SSH_KEY}"
-          echo "SSH key first 100 chars: ${SSH_KEY:0:100}"
-
-      - name: Add server to known hosts
+      - name: Create SSH directory
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
+
+      - name: Add server to known hosts
+        run: |
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Create SSH key file
+        run: |
+          cat > ~/.ssh/deploy_key << 'EOF'
+          ${{ secrets.SSH_KEY }}
+          EOF
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Debug key file
+        run: |
+          echo "Key file content:"
+          cat ~/.ssh/deploy_key
+          echo ""
+          echo "Key file permissions:"
+          ls -la ~/.ssh/deploy_key
 
       - name: Test SSH connection
         run: |
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection successful!'"
+          ssh -v -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "echo 'SSH connection successful!'"
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }}
             docker stop myapp || true
             docker rm myapp || true
