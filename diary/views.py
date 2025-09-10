@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
+from django.db.models import Q  # ← Добавьте этот импорт
 from .models import Entry
 from .forms import EntryForm
 
@@ -27,12 +28,21 @@ class EntryListView(LoginRequiredMixin, ListView):
         Возвращает отфильтрованный queryset записей.
 
         Фильтрует записи по текущему пользователю и сортирует
-        по дате создания в обратном порядке.
+        по дате создания в обратном порядке. Добавлена поддержка поиска.
 
         Возвращает:
             QuerySet: Записи текущего пользователя, отсортированные по дате.
         """
-        return Entry.objects.filter(author=self.request.user).order_by("-created_at")
+        queryset = Entry.objects.filter(author=self.request.user).order_by("-created_at")
+
+        # Добавлен поиск по заголовку и содержанию
+        search_query = self.request.GET.get('q')
+        if search_query:
+            queryset = queryset.filter(
+                Q(title__icontains=search_query) |
+                Q(content__icontains=search_query)
+            )
+        return queryset
 
 
 class EntryDetailView(LoginRequiredMixin, DetailView):
