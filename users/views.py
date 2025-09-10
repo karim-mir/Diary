@@ -1,10 +1,12 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 from django.views import View
+from diary.models import Entry
 
 from users.forms import CustomUserRegistrationForm
 from users.models import EmailConfirmation
@@ -137,12 +139,3 @@ class LogoutView(View):
         """
         logout(request)
         return redirect("users:login")
-
-
-class HomeView(TemplateView):
-    """
-    Представление для домашней страницы пользователя.
-
-    Отображает главную страницу после успешного входа.
-    """
-    template_name = "users/home.html"
