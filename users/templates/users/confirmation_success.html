@@ -1,0 +1,7 @@
+{% extends "diary/base.html" %}
+
+{% block base_content %}
+<h1>Ваш email успешно подтвержден!</h1>
+<p>Теперь вы можете войти в свой аккаунт.</p>
+<a href="{% url 'login' %}">Войти в систему</a>
+{% endblock %}

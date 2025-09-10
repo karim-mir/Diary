@@ -1,0 +1,10 @@
+{% extends "diary/base.html" %}
+{% block title %}{{ entry.title }} - Мой дневник{% endblock %}
+{% block content %}
+<h1>{{ entry.title }}</h1>
+<p><small class="text-muted">{{ entry.created_at|date:"Y-m-d H:i" }}</small></p>
+<div class="mb-4">{{ entry.content|linebreaksbr }}</div>
+<a href="{% url 'diary:entry_edit' entry.pk %}" class="btn btn-primary">Редактировать</a>
+<a href="{% url 'diary:entry_delete' entry.pk %}" class="btn btn-danger">Удалить</a>
+<a href="{% url 'diary:entry_list' %}" class="btn btn-secondary">Вернуться к списку</a>
+{% endblock %}

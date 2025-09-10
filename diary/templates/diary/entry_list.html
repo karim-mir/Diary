@@ -1,0 +1,82 @@
+{% extends "diary/base.html" %}
+{% block title %}Записи - Мой дневник{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <!-- Поисковая форма -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="get" action="{% url 'diary:entry_list' %}">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control"
+                           placeholder="Поиск по заголовку или содержанию..."
+                           value="{{ request.GET.q }}">
+                    <button class="btn btn-outline-primary" type="submit">Найти</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Результаты поиска -->
+    {% if request.GET.q %}
+    <div class="alert alert-info mb-3">
+        Результаты поиска для: "<strong>{{ request.GET.q }}</strong>"
+        <a href="{% url 'diary:entry_list' %}" class="btn btn-sm btn-outline-secondary ms-2">
+            Очистить поиск
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Заголовок и кнопка создания -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Мои записи</h1>
+        <a href="{% url 'diary:entry_create' %}" class="btn btn-primary">
+            + Новая запись
+        </a>
+    </div>
+
+    <!-- Список записей -->
+    {% if entries %}
+    <div class="list-group">
+        {% for entry in entries %}
+        <div class="list-group-item">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <h5 class="mb-1">
+                        <a href="{% url 'diary:entry_detail' entry.pk %}" class="text-decoration-none">
+                            {{ entry.title }}
+                        </a>
+                    </h5>
+                    <p class="mb-1 text-muted">
+                        {{ entry.content|truncatewords:30 }}
+                    </p>
+                    <small class="text-muted">
+                        Создано: {{ entry.created_at|date:"d.m.Y H:i" }}
+                        {% if entry.updated_at != entry.created_at %}
+                        | Обновлено: {{ entry.updated_at|date:"d.m.Y H:i" }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="btn-group ms-3" role="group">
+                    <a href="{% url 'diary:entry_edit' entry.pk %}" class="btn btn-sm btn-outline-secondary">
+                        ✏️
+                    </a>
+                    <a href="{% url 'diary:entry_delete' entry.pk %}" class="btn btn-sm btn-outline-danger">
+                        🗑️
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h4 class="alert-heading">Пока записей нет</h4>
+        <p>Создайте свою первую запись в дневнике!</p>
+        <hr>
+        <a href="{% url 'diary:entry_create' %}" class="btn btn-primary">
+            Создать первую запись
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

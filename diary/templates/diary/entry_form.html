@@ -1,0 +1,11 @@
+{% extends "diary/base.html" %}
+{% block title %}{{ view.action }} Запись - Мой дневник{% endblock %}
+{% block content %}
+<h1>{{ view.action }} Запись</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Сохранить</button>
+  <a href="{% url 'diary:entry_list' %}" class="btn btn-secondary">Отменить</a>
+</form>
+{% endblock %}

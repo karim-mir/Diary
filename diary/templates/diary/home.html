@@ -1,0 +1,33 @@
+{% extends "diary/base.html" %}
+
+{% block title %}Главная - Мой дневник{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Добро пожаловать в ваш дневник!</h1>
+
+    {% if recent_entries %}
+    <div class="mt-4">
+        <h2>Последние записи</h2>
+        <div class="row">
+            {% for entry in recent_entries %}
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ entry.title }}</h5>
+                        <p class="card-text">{{ entry.content|truncatewords:20 }}</p>
+                        <small class="text-muted">{{ entry.created_at|date:"d.m.Y H:i" }}</small>
+                        <a href="{% url 'diary:entry_detail' entry.pk %}" class="btn btn-primary btn-sm ms-2">Читать</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info mt-4">
+        <p>У вас пока нет записей. <a href="{% url 'diary:entry_create' %}">Создайте первую запись!</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

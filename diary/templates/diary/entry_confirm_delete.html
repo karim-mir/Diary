@@ -1,0 +1,10 @@
+{% extends "diary/base.html" %}
+{% block title %}Удалить запись - Мой дневник{% endblock %}
+{% block content %}
+<h1>Удалить запись</h1>
+<p>Вы уверены, что хотите удалить запись? "{{ object.title }}"?</p>
+<form method="post">{% csrf_token %}
+  <button type="submit" class="btn btn-danger">Удалить</button>
+  <a href="{% url 'diary:entry_list' %}" class="btn btn-secondary">Отменить</a>
+</form>
+{% endblock %}

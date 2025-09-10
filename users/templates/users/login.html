@@ -1,0 +1,18 @@
+{% extends "diary/base.html" %}
+{% block base_content %}
+<div class="container mt-8">
+    <form class="row" method="post" enctype="multipart/form-data" style="margin-top: 250px;">  <!-- Встроенный стиль -->
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
