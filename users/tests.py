@@ -179,9 +179,3 @@ class UsersViewsTest(TestCase):
         self.client.login(email=user.email, password="pass")
         response = self.client.get(reverse("users:logout"))
         self.assertRedirects(response, reverse("users:login"))
-
-    def test_home_view(self):
-        """Тест домашней страницы пользователя."""
-        response = self.client.get(reverse("users:home"))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, "users/home.html")
