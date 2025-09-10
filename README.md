@@ -50,12 +50,18 @@
 git clone https://github.com/karim-mir/Diary.git
 ```
 
-### 2. Установка зависимостей
-```commandline
-poetry install
+### 2. Запуск приложения
+```
+docker-compose up --build
 ```
 
-### 3. Настройка окружения
+### 3. Применение миграций и создание тестовых данных
+```
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py create_test_data
+```
+
+### 4. Настройка окружения
 Создайте файл `.env` в корневой директории:
 ```commandline
 SECRET_KEY=your-secret-key-here
@@ -93,6 +99,20 @@ docker-compose up --build
 
 ## 🔧 Конфигурация
 
+### Тестовые данные после создания команды create_test_data
+
+**👤 Пользователь для тестирования:**
+- Email: testuser@example.com
+- Пароль: testpassword123
+
+**📝 Примеры записей:**
+- "Программирование на Python" - теги: Python, Программирование
+- "Отдых на природе" - теги: Отдых
+- "Работа с Django" - теги: Django, Программирование
+
+**🏷️ Доступные теги:**
+Python, Django, Отдых, Программирование
+
 ### Переменные окружения
 
 ```
@@ -117,6 +137,43 @@ poetry run python manage.py test
 ```commandline
 coverage run manage.py test
 coverage report
+```
+
+### Запуск тестов с покрытием
+```commandline
+coverage run manage.py test
+coverage report
+```
+
+### Запуск конкретных тестов
+
+#### Тесты приложения diary
+```commandline
+python manage.py test diary.tests
+```
+
+#### Тесты поисковой функциональности  
+```commandline
+python manage.py test diary.tests.DiarySearchTest
+```
+
+#### Тесты моделей
+```commandline
+python manage.py test diary.tests.EntryModelTest
+```
+
+#### Тесты представлений
+```commandline
+python manage.py test diary.tests.DiaryViewsTest
+```
+
+### Подготовка данных для тестов
+
+#### Перед запуском тестов рекомендуется создать тестовые данные:
+
+```commandline
+python manage.py create_test_data
+python manage.py test
 ```
 
 ## 🔄 CI/CD Pipeline
