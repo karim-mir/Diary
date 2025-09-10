@@ -171,7 +171,7 @@ class UsersViewsTest(TestCase):
             "password": "pass",
         }
         response = self.client.post(reverse("users:login"), data)
-        self.assertRedirects(response, reverse("diary:base"))
+        self.assertRedirects(response, reverse("diary:entry_list"))
 
     def test_logout_view(self):
         """Тест выхода из системы."""
