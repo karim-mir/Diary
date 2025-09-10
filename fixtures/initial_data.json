@@ -1,0 +1,36 @@
+[
+{
+    "model": "users.customuser",
+    "fields": {
+        "password": "pbkdf2_sha256$870000$4R5XhU2eCk6W8qL9t3vB1n$...",
+        "last_login": null,
+        "is_superuser": false,
+        "email": "testuser@example.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2024-01-15T10:00:00Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "diary.entry",
+    "fields": {
+        "title": "Первая запись в дневнике",
+        "content": "Это моя первая запись в этом замечательном дневнике.",
+        "author": 1,
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z"
+    }
+},
+{
+    "model": "diary.entry",
+    "fields": {
+        "title": "Второй день ведения дневника",
+        "content": "Сегодня был продуктивный день. Много чего успел сделать.",
+        "author": 1,
+        "created_at": "2024-01-16T14:45:00Z",
+        "updated_at": "2024-01-16T14:45:00Z"
+    }
+}
+]

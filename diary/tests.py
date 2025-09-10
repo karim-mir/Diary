@@ -167,3 +167,116 @@ class DiaryViewsTest(TestCase):
         response = self.client.post(reverse("diary:entry_delete", args=[self.entry.pk]))
         self.assertEqual(response.status_code, 302)
         self.assertFalse(Entry.objects.filter(pk=self.entry.pk).exists())
+
+
+class DiarySearchTest(TestCase):
+    """
+    Тесты для поисковой функциональности.
+
+    Проверяет:
+    - поиск по заголовку
+    - поиск по содержанию
+    - поиск с учетом регистра
+    - поиск несуществующего текста
+    """
+
+    def setUp(self):
+        """
+        Настройка тестовых данных для поиска.
+
+        Создает:
+        - тестового пользователя
+        - несколько записей с разным содержанием
+        """
+        self.user = User.objects.create_user(
+            email="testuser@example.com",
+            password="testpass"
+        )
+        self.client.login(email="testuser@example.com", password="testpass")
+
+        # Создаем тестовые записи
+        self.entry1 = Entry.objects.create(
+            author=self.user,
+            title="Программирование на Python",
+            content="Сегодня изучал основы Python и Django"
+        )
+        self.entry2 = Entry.objects.create(
+            author=self.user,
+            title="Отдых на природе",
+            content="Ходил в поход в лес, было очень красиво"
+        )
+        self.entry3 = Entry.objects.create(
+            author=self.user,
+            title="Работа с Django",
+            content="Разрабатываю новое приложение на Django"
+        )
+
+    def test_search_by_title(self):
+        """
+        Тестирует поиск записей по заголовку.
+
+        Проверяет, что находятся только записи с совпадающим заголовком.
+        """
+        response = self.client.get(reverse('diary:entry_list') + '?q=Python')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Программирование на Python")
+        self.assertNotContains(response, "Отдых на природе")
+        self.assertNotContains(response, "Работа с Django")
+
+    def test_search_by_content(self):
+        """
+        Тестирует поиск записей по содержанию.
+
+        Проверяет, что находятся записи с совпадающим содержанием.
+        """
+        response = self.client.get(reverse('diary:entry_list') + '?q=лес')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Отдых на природе")
+        self.assertNotContains(response, "Программирование на Python")
+        self.assertNotContains(response, "Работа с Django")
+
+    def test_search_case_insensitive(self):
+        """
+        Тестирует поиск без учета регистра.
+
+        Проверяет, что поиск работает независимо от регистра.
+        """
+        response = self.client.get(reverse('diary:entry_list') + '?q=DJANGO')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Программирование на Python")
+        self.assertContains(response, "Работа с Django")
+
+    def test_search_multiple_words(self):
+        """
+        Тестирует поиск по нескольким словам.
+
+        Проверяет, что поиск работает с частичным совпадением.
+        """
+        response = self.client.get(reverse('diary:entry_list') + '?q=новое приложение')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Работа с Django")
+
+    def test_search_no_results(self):
+        """
+        Тестирует поиск несуществующего текста.
+
+        Проверяет, что при отсутствии результатов показывается пустой список.
+        """
+        response = self.client.get(reverse('diary:entry_list') + '?q=несуществующийтекст')
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Программирование на Python")
+        self.assertNotContains(response, "Отдых на природе")
+        self.assertNotContains(response, "Работа с Django")
+        self.assertContains(response, "Пока записей нет", html=True)
+
+    def test_search_empty_query(self):
+        """
+        Тестирует поведение при пустом поисковом запросе.
+
+        Проверяет, что показываются все записи при пустом поиске.
+        """
+        response = self.client.get(reverse('diary:entry_list') + '?q=')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Программирование на Python")
+        self.assertContains(response, "Отдых на природе")
+        self.assertContains(response, "Работа с Django")
