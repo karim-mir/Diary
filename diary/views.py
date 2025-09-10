@@ -2,46 +2,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
-from django.views.generic.edit import FormView
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
 from .models import Entry
 from .forms import EntryForm
-
-
-class RegisterView(FormView):
-    """
-    Представление для регистрации нового пользователя.
-
-    Отображает и обрабатывает форму регистрации UserCreationForm.
-    После успешной регистрации автоматически выполняет вход пользователя
-    и перенаправляет на список записей.
-
-    Атрибуты:
-        template_name (str): Путь к шаблону формы регистрации.
-        form_class (Form): Класс формы для регистрации.
-        success_url (str): URL для перенаправления после успешной регистрации.
-    """
-    template_name = 'registration/register.html'
-    form_class = UserCreationForm
-    success_url = reverse_lazy('entry_list')
-
-    def form_valid(self, form):
-        """
-        Обрабатывает валидную форму регистрации.
-
-        Сохраняет пользователя, выполняет автоматический вход
-        и возвращает перенаправление на success_url.
-
-        Аргументы:
-            form (UserCreationForm): Валидная форма регистрации.
-
-        Возвращает:
-            HttpResponseRedirect: Перенаправление на success_url.
-        """
-        user = form.save()
-        login(self.request, user)
-        return super().form_valid(form)
 
 
 class EntryListView(LoginRequiredMixin, ListView):
@@ -245,7 +207,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
             dict: Контекст данных для шаблона.
         """
         context = super().get_context_data(**kwargs)
-        # Пример: добавление последних 5 записей
         context['recent_entries'] = Entry.objects.filter(
             author=self.request.user
         ).order_by('-created_at')[:5]
