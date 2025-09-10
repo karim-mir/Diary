@@ -79,7 +79,7 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
     model = Entry
     form_class = EntryForm
     template_name = 'diary/entry_form.html'
-    success_url = reverse_lazy('entry_list')
+    success_url = reverse_lazy('diary:entry_list')
 
     def form_valid(self, form):
         """
@@ -128,7 +128,7 @@ class EntryUpdateView(LoginRequiredMixin, UpdateView):
     model = Entry
     form_class = EntryForm
     template_name = 'diary/entry_form.html'
-    success_url = reverse_lazy('entry_list')
+    success_url = reverse_lazy('diary:entry_list')
 
     def get_queryset(self):
         """
@@ -170,7 +170,7 @@ class EntryDeleteView(LoginRequiredMixin, DeleteView):
     """
     model = Entry
     template_name = 'diary/entry_confirm_delete.html'
-    success_url = reverse_lazy('entry_list')
+    success_url = reverse_lazy('diary:entry_list')
 
     def get_queryset(self):
         """
