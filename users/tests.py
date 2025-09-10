@@ -14,7 +14,10 @@ User = get_user_model()
 
 # Тесты для forms.py
 class CustomUserRegistrationFormTest(TestCase):
+    """Тесты для формы регистрации пользователя CustomUserRegistrationForm."""
+
     def test_form_valid_data(self):
+        """Тест корректной валидации формы с правильными данными."""
         form_data = {
             "email": "testuser@example.com",
             "password1": "strong_password123",
@@ -27,6 +30,7 @@ class CustomUserRegistrationFormTest(TestCase):
         self.assertTrue(user.check_password("strong_password123"))
 
     def test_form_password_mismatch(self):
+        """Тест валидации формы при несовпадении паролей."""
         form_data = {
             "email": "testuser@example.com",
             "password1": "password1",
@@ -37,6 +41,7 @@ class CustomUserRegistrationFormTest(TestCase):
         self.assertIn("password2", form.errors)
 
     def test_form_missing_email(self):
+        """Тест валидации формы при отсутствии email."""
         form_data = {
             "email": "",
             "password1": "strong_password123",
@@ -49,7 +54,10 @@ class CustomUserRegistrationFormTest(TestCase):
 
 # Тесты для models.py
 class CustomUserModelTest(TestCase):
+    """Тесты для модели пользователя CustomUser."""
+
     def test_create_user(self):
+        """Тест создания обычного пользователя."""
         user = User.objects.create_user(
             email="user@example.com", password="testpass123"
         )
@@ -59,6 +67,7 @@ class CustomUserModelTest(TestCase):
         self.assertFalse(user.is_superuser)
 
     def test_create_superuser(self):
+        """Тест создания суперпользователя."""
         admin_user = User.objects.create_superuser(
             email="admin@example.com", password="adminpass"
         )
@@ -68,34 +77,44 @@ class CustomUserModelTest(TestCase):
         self.assertTrue(admin_user.is_active)
 
     def test_create_user_no_email(self):
+        """Тест создания пользователя без email (должен вызывать исключение)."""
         with self.assertRaises(ValueError):
             User.objects.create_user(email=None, password="pass")
 
 
 class EmailConfirmationModelTest(TestCase):
+    """Тесты для модели подтверждения email."""
+
     def setUp(self):
+        """Настройка тестовых данных."""
         self.user = User.objects.create_user(
             email="user2@example.com", password="pass123"
         )
 
     def test_email_confirmation_creation(self):
+        """Тест создания объекта подтверждения email."""
         confirmation = EmailConfirmation.objects.create(user=self.user)
         self.assertEqual(confirmation.user, self.user)
         self.assertIsInstance(confirmation.token, uuid.UUID)
         self.assertIsNotNone(confirmation.created_at)
 
     def test_email_confirmation_str(self):
+        """Тест строкового представления объекта подтверждения email."""
         confirmation = EmailConfirmation.objects.create(user=self.user)
 
 
 # Тесты для views.py
 class UsersViewsTest(TestCase):
+    """Тесты для views модуля users."""
+
     def test_register_view_get(self):
+        """Тест GET-запроса к странице регистрации."""
         response = self.client.get(reverse("users:register"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/register.html")
 
     def test_register_view_post_valid(self):
+        """Тест POST-запроса с валидными данными регистрации."""
         data = {
             "email": "testuser@example.com",
             "password1": "StrongPassword123",
@@ -112,6 +131,7 @@ class UsersViewsTest(TestCase):
         self.assertIn("testuser@example.com", mail.outbox[0].to)
 
     def test_confirm_email_valid_token(self):
+        """Тест подтверждения email с валидным токеном."""
         user = User.objects.create_user(
             email="testuser2@example.com", password="pass", is_active=False
         )
@@ -129,6 +149,7 @@ class UsersViewsTest(TestCase):
         self.assertFalse(EmailConfirmation.objects.filter(user=user).exists())
 
     def test_confirm_email_invalid_token(self):
+        """Тест подтверждения email с невалидным токеном."""
         url = reverse(
             "users:confirm_email", args=["00000000-0000-0000-0000-000000000000"]
         )
@@ -137,11 +158,13 @@ class UsersViewsTest(TestCase):
         self.assertTemplateUsed(response, "users/confirmation_invalid.html")
 
     def test_login_view_get(self):
+        """Тест GET-запроса к странице входа."""
         response = self.client.get(reverse("users:login"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/login.html")
 
     def test_login_view_post_valid(self):
+        """Тест POST-запроса с валидными данными входа."""
         user = User.objects.create_user(email="loginuser@example.com", password="pass")
         data = {
             "username": user.email,  # форма по умолчанию использует поле username для логина, здесь email
@@ -151,12 +174,14 @@ class UsersViewsTest(TestCase):
         self.assertRedirects(response, reverse("diary:base"))
 
     def test_logout_view(self):
+        """Тест выхода из системы."""
         user = User.objects.create_user(email="logoutuser@example.com", password="pass")
         self.client.login(email=user.email, password="pass")
         response = self.client.get(reverse("users:logout"))
         self.assertRedirects(response, reverse("users:login"))
 
     def test_home_view(self):
+        """Тест домашней страницы пользователя."""
         response = self.client.get(reverse("users:home"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "users/home.html")
